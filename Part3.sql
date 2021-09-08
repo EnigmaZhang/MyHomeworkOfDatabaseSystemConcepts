@@ -5,13 +5,17 @@ USE SCHOOL;
 -- 3.1 --
 SELECT title
 FROM course
-WHERE credits = 3 AND dept_name = "Comp. Sci.";
+WHERE credits = 3
+  AND dept_name = "Comp. Sci.";
 
 SELECT DISTINCT takes.ID
-FROM takes, teaches, instructor
+FROM takes,
+     teaches,
+     instructor
 WHERE (takes.course_id, takes.sec_id, takes.semester, takes.year) =
       (teaches.course_id, takes.sec_id, teaches.semester, teaches.year)
-AND teaches.ID = instructor.ID AND instructor.name = "Einstein";
+  AND teaches.ID = instructor.ID
+  AND instructor.name = "Einstein";
 
 SELECT MAX(salary)
 FROM instructor;
@@ -21,38 +25,40 @@ FROM instructor
 WHERE salary = (
     SELECT MAX(salary)
     FROM instructor
-    );
+);
 
 SELECT DISTINCT section.course_id, section.sec_id, COUNT(takes.ID) AS enrollment
-FROM section, takes
+FROM section,
+     takes
 WHERE (section.course_id, section.sec_id, section.year, section.semester) =
       (takes.course_id, takes.sec_id, takes.year, takes.semester)
-AND section.year = 2017 AND section.semester = "Fall"
+  AND section.year = 2017
+  AND section.semester = "Fall"
 GROUP BY section.course_id, section.sec_id;
 
 WITH E AS
-    (SELECT DISTINCT section.course_id, section.sec_id, COUNT(takes.ID) AS enrollment
-     FROM section,
-          takes
-     WHERE (section.course_id, section.sec_id, section.year, section.semester) =
-           (takes.course_id, takes.sec_id, takes.year, takes.semester)
-       AND section.year = 2017
-       AND section.semester = "Fall"
-     GROUP BY section.course_id, section.sec_id
-    )
+         (SELECT DISTINCT section.course_id, section.sec_id, COUNT(takes.ID) AS enrollment
+          FROM section,
+               takes
+          WHERE (section.course_id, section.sec_id, section.year, section.semester) =
+                (takes.course_id, takes.sec_id, takes.year, takes.semester)
+            AND section.year = 2017
+            AND section.semester = "Fall"
+          GROUP BY section.course_id, section.sec_id
+         )
 SELECT MAX(E.enrollment)
 FROM E;
 
 WITH E AS
-    (SELECT DISTINCT section.course_id, section.sec_id, COUNT(takes.ID) AS enrollment
-     FROM section,
-          takes
-     WHERE (section.course_id, section.sec_id, section.year, section.semester) =
-           (takes.course_id, takes.sec_id, takes.year, takes.semester)
-       AND section.year = 2017
-       AND section.semester = "Fall"
-     GROUP BY section.course_id, section.sec_id
-    )
+         (SELECT DISTINCT section.course_id, section.sec_id, COUNT(takes.ID) AS enrollment
+          FROM section,
+               takes
+          WHERE (section.course_id, section.sec_id, section.year, section.semester) =
+                (takes.course_id, takes.sec_id, takes.year, takes.semester)
+            AND section.year = 2017
+            AND section.semester = "Fall"
+          GROUP BY section.course_id, section.sec_id
+         )
 SELECT course_id, sec_id
 FROM E
 WHERE enrollment = (SELECT MAX(enrollment) FROM E)
@@ -62,22 +68,21 @@ WHERE enrollment = (SELECT MAX(enrollment) FROM E)
 DROP TABLE grade_points;
 CREATE TABLE grade_points
 (
-    grade VARCHAR(2) NULL,
+    grade  VARCHAR(2)    NULL,
     points DECIMAL(2, 1) NOT NULL
 );
 INSERT INTO grade_points
-VALUES
-("A", 4.0),
-("B+", 3.7),
-("B", 3.4),
-("B-", 3.0),
-("C+", 2.7),
-("C", 2.4),
-("C-", 2.1),
-("D+", 1.8),
-("D", 1.5),
-("D-", 1.2),
-("E", 0);
+VALUES ("A", 4.0),
+       ("B+", 3.7),
+       ("B", 3.4),
+       ("B-", 3.0),
+       ("C+", 2.7),
+       ("C", 2.4),
+       ("C-", 2.1),
+       ("D+", 1.8),
+       ("D", 1.5),
+       ("D-", 1.2),
+       ("E", 0);
 
 (
     SELECT SUM(course.credits * G.points)
@@ -94,7 +99,7 @@ UNION
     SELECT 0
     FROM student
     WHERE ID = "12345"
-    AND NOT EXISTS(SELECT * FROM takes WHERE ID = "12345")
+      AND NOT EXISTS(SELECT * FROM takes WHERE ID = "12345")
 );
 
 (
@@ -112,7 +117,7 @@ UNION
     SELECT NULL
     FROM student
     WHERE ID = "12345"
-    AND NOT EXISTS(SELECT * FROM takes WHERE ID = "12345")
+      AND NOT EXISTS(SELECT * FROM takes WHERE ID = "12345")
 );
 
 (
@@ -128,7 +133,8 @@ UNION
 -- When student does not take any course.
 (
     SELECT student.ID, NULL
-    FROM student, takes
+    FROM student,
+         takes
     WHERE NOT EXISTS(SELECT * FROM takes WHERE student.ID = takes.ID)
 );
 
@@ -136,7 +142,8 @@ UPDATE instructor
 SET salary = salary * 1.1
 WHERE instructor.dept_name = "Comp. Sci.";
 
-DELETE FROM course
+DELETE
+FROM course
 WHERE course_id NOT IN (SELECT course_id FROM section);
 
 INSERT INTO instructor
