@@ -103,7 +103,7 @@ UNION
 );
 
 (
-    SELECT SUM(course.credits) / SUM(course.credits * G.points) AS GPA
+    SELECT SUM(course.credits * G.points) / SUM(course.credits) AS GPA
     FROM takes,
          course,
          grade_points AS G
@@ -121,7 +121,7 @@ UNION
 );
 
 (
-    SELECT takes.ID, SUM(course.credits) / SUM(course.credits * G.points) AS GPA
+    SELECT takes.ID, UM(course.credits * G.points) / SUM(course.credits) AS GPA
     FROM takes,
          course,
          grade_points AS G
